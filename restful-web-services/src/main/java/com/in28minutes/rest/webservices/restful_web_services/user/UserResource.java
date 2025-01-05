@@ -2,8 +2,11 @@ package com.in28minutes.rest.webservices.restful_web_services.user;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,15 +22,25 @@ import jakarta.validation.Valid;
 public class UserResource {
 
 	private UserDaoService service;
+	private MessageSource messageSource;
 	
-	public UserResource(UserDaoService service) {
+	public UserResource(UserDaoService service, MessageSource messageSource) {
 		this.service = service;
+		this.messageSource = messageSource;
+	}
+
+	
+	@GetMapping("/hello-world-internationalized")
+	public String helloWorldInternationalized() {
+		Locale locale = LocaleContextHolder.getLocale();
+		return messageSource.getMessage("good.morning.message", null, "Default Message", locale);
 	}
 
 	@GetMapping("/users")
 	public List<User> retrieveAllUsers() {
 		return service.findAll();
 	}
+	
 	
 	@GetMapping("/users/{id}")
 	public User retrieveUser(@PathVariable int id) {
